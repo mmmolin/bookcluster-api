@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using BookCluster.API.Models;
 using BookCluster.Repository;
 using Microsoft.AspNetCore.Http;
@@ -14,9 +15,12 @@ namespace BookCluster.API.Controllers
     public class AuthorsController : ControllerBase
     {
         private readonly UnitOfWork unitOfWork;
-        public AuthorsController(IOptions<Option> options)
+        private readonly IMapper mapper;
+
+        public AuthorsController(IOptions<Option> options, IMapper mapper)
         {
-            this.unitOfWork = new UnitOfWork(options.Value.ConnectionString);            
+            this.unitOfWork = new UnitOfWork(options.Value.ConnectionString);
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -24,18 +28,8 @@ namespace BookCluster.API.Controllers
         {
             try
             {
-                var results = await unitOfWork.AuthorRepository.GetAllAsync();
-                var authors = new List<Author>();
-                foreach (var entity in results)
-                {
-                    var author = new Author
-                    {
-                        Id = entity.Id,
-                        FirstName = entity.FirstName,
-                        LastName = entity.LastName
-                    };
-                    authors.Add(author);
-                }
+                var entities = await unitOfWork.AuthorRepository.GetAllAsync();
+                var authors = mapper.Map<Models.Author[]>(entities);
                 return Ok(authors);
             }
             catch (Exception)
@@ -49,16 +43,10 @@ namespace BookCluster.API.Controllers
         {
             try
             {
-                var result = await unitOfWork.AuthorRepository.FindAsync(id);
-                var author = new Author();
-                if (result != null)
+                var entity = await unitOfWork.AuthorRepository.FindAsync(id);
+                if (entity != null)
                 {
-                    author = new Author
-                    {
-                        Id = result.Id,
-                        FirstName = result.FirstName,
-                        LastName = result.LastName
-                    };
+                    var author = mapper.Map<Models.Author>(entity);
                     return Ok(author);
                 }
 
@@ -75,19 +63,14 @@ namespace BookCluster.API.Controllers
         {
             try
             {
-                var result = await unitOfWork.AuthorRepository.GetAuthorAndBooksAsync(id);
-                if(result != null)
+                var entity = await unitOfWork.AuthorRepository.GetAuthorAndBooksAsync(id);
+                if(entity != null)
                 {
-                    var author = new Author
-                    {
-                        Id = result.Id,
-                        FirstName = result.FirstName,
-                        LastName = result.LastName
-                    };
+                    var author = mapper.Map<Models.Author>(entity);
                     
-                    if(result.Books != null)
+                    if(entity.Books != null)
                     {
-                        author.Books = result.Books.Select(x => new Book { Id = x.Id, Title = x.Title }).ToList();
+                        author.Books = entity.Books.Select(x => new Book { Id = x.Id, Title = x.Title }).ToList();
                     }
                     return Ok(author);
                 }
