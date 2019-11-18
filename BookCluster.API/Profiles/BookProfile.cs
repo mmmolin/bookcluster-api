@@ -10,7 +10,7 @@ namespace BookCluster.API.Profiles
     {
         public BookProfile()
         {
-            CreateMap<Domain.Entities.Book, Models.Book>();
+            CreateMap<Domain.Entities.Book, Models.Book>().ForSourceMember(x => x.AuthorId, z => z.DoNotValidate());
             CreateMap<Models.Book, Domain.Entities.Book>();
         }
     }

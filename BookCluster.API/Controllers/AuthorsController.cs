@@ -59,20 +59,15 @@ namespace BookCluster.API.Controllers
         }
 
         [HttpGet("{id}/Books")]
-        public async Task<ActionResult<Author>> GetAuthorAndBooks(int id)
+        public async Task<ActionResult<Book[]>> GetAuthorAndBooks(int id)
         {
             try
             {
-                var entity = await unitOfWork.AuthorRepository.GetAuthorAndBooksAsync(id);
-                if(entity != null)
+                var entities = await unitOfWork.BookRepository.GetAuthorRelatedBooks(id);
+                if(entities.Any())
                 {
-                    var author = mapper.Map<Models.Author>(entity);
-                    
-                    if(entity.Books != null)
-                    {
-                        author.Books = entity.Books.Select(x => new Book { Id = x.Id, Title = x.Title }).ToList();
-                    }
-                    return Ok(author);
+                    var books = mapper.Map<Models.Book[]>(entities);
+                    return Ok(books);
                 }
                 return NotFound();
             }

@@ -1,5 +1,9 @@
 ﻿using BookCluster.Domain.Entities;
+using Dapper;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookCluster.Repository
 {
@@ -11,6 +15,18 @@ namespace BookCluster.Repository
             this.dbContext = dbContext;
         }
 
+        public async Task<List<Book>> GetAuthorRelatedBooks(int authorId)
+        {
+            var bookResult = new List<Book>();
+            var parameters = new { id = authorId };
+            string sql = "SELECT * FROM Book WHERE Book.AuthorId = @id";
+            using (var connection = dbContext)
+            {
+                var bookResultAsync = await connection.QueryAsync<Book>(sql, parameters);
+                bookResult = bookResultAsync.ToList();
+            }
 
+            return bookResult;
+        }
     }
 }
