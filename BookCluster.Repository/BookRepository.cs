@@ -17,7 +17,7 @@ namespace BookCluster.Repository
 
         public async Task<List<Book>> GetAuthorRelatedBooks(int authorId)
         {
-            var bookResult = new List<Book>();
+            List<Book> bookResult = null;
             var parameters = new { id = authorId };
             string sql = "SELECT * FROM Book WHERE Book.AuthorId = @id";
             using (var connection = dbContext)
