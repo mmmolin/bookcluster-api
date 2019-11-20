@@ -1,10 +1,5 @@
 ﻿using BookCluster.Domain.Entities;
-using Dapper;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookCluster.Repository
 {

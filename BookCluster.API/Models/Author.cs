@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BookCluster.API.Models
+﻿namespace BookCluster.API.Models
 {
     public class Author
     {
