@@ -24,7 +24,7 @@ namespace BookCluster.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Author>>> GetAllAuthors()
+        public async Task<ActionResult<Author[]>> GetAllAuthors()
         {
             try
             {
@@ -39,7 +39,7 @@ namespace BookCluster.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthorAsync(int id)
+        public async Task<ActionResult<Author>> GetAuthor(int id)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace BookCluster.API.Controllers
         }
 
         [HttpGet("{id}/Books")]
-        public async Task<ActionResult<Book[]>> GetAuthorAndBooks(int id)
+        public async Task<ActionResult<Book[]>> GetAuthorRelatedBooks(int id)
         {
             try
             {

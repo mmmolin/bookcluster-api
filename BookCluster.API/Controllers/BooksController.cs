@@ -24,10 +24,39 @@ namespace BookCluster.API.Controllers
             this.mapper = mapper;
         }
 
-        //[HttpGet]
-        //public async Task<Book[]> GetAllBooks()
-        //{
+        [HttpGet]
+        public async Task<ActionResult<Book[]>> GetAllBooks()
+        {
+            try
+            {
+                var entities = await unitOfWork.BookRepository.GetAllAsync();
+                var books = mapper.Map<Models.Book[]>(entities);
+                return Ok(books);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database failure");
+            }
+        }
 
-        //}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Book>> GetBook(int id)
+        {
+            try
+            {
+                var entity = await unitOfWork.BookRepository.FindAsync(id);
+                if(entity != null)
+                {
+                    var book = mapper.Map<Models.Book>(entity);
+                    return Ok(book);
+                }
+
+                return NotFound();
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database failure");
+            }
+        }
     }
 }
