@@ -5,7 +5,7 @@ namespace BookCluster.Domain.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        Task AddAsync(TEntity entity);
+        Task<int> AddAsync(TEntity entity);
 
 
         Task DeleteAsync(int id);

@@ -15,7 +15,7 @@ namespace BookCluster.Repository
             this.dbContext = dbContext;
         }
 
-        public async Task<List<Book>> GetAuthorRelatedBooks(int authorId)
+        public async Task<List<Book>> GetAuthorRelatedBooksAsync(int authorId)
         {
             List<Book> bookResult = null;
             var parameters = new { id = authorId };

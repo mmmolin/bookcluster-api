@@ -23,7 +23,7 @@ namespace BookCluster.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Author[]>> GetAllAuthors()
+        public async Task<ActionResult<Author[]>> GetAllAuthorsAsync()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace BookCluster.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        public async Task<ActionResult<Author>> GetAuthorAsync(int id)
         {
             try
             {
@@ -58,11 +58,11 @@ namespace BookCluster.API.Controllers
         }
 
         [HttpGet("{id}/Books")]
-        public async Task<ActionResult<Book[]>> GetAuthorRelatedBooks(int id)
+        public async Task<ActionResult<Book[]>> GetAuthorRelatedBooksAsync(int id)
         {
             try
             {
-                var entities = await unitOfWork.BookRepository.GetAuthorRelatedBooks(id);
+                var entities = await unitOfWork.BookRepository.GetAuthorRelatedBooksAsync(id);
                 if(entities.Any())
                 {
                     var books = mapper.Map<Models.Book[]>(entities);
@@ -74,6 +74,22 @@ namespace BookCluster.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Database failure");
             }            
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Author>> CreateAuthorASync([FromBody]Author author)
+        {
+            try
+            {
+                var entity = mapper.Map<Domain.Entities.Author>(author);
+                int id = await unitOfWork.AuthorRepository.AddAsync(entity);
+
+                return Created(nameof(GetAuthorAsync), new { id = id });
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database failure"); // Fix this, can't be right.
+            }
         }
     }
 }

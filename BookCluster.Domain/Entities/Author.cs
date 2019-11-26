@@ -13,6 +13,6 @@ namespace BookCluster.Domain.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        public IEnumerable<Book> Books { get; set; }
+        //public IEnumerable<Book> Books { get; set; } // Should not be here, use DTO to mix entities.
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using BookCluster.Domain.Interfaces;
@@ -14,9 +15,10 @@ namespace BookCluster.Repository
         {
             this.dbContext = dbContext;
         }
-        public async Task AddAsync(TEntity entity)
+        public async Task<int> AddAsync(TEntity entity)
         {
-            await dbContext.InsertAsync<TEntity>(entity);
+            int id = await dbContext.InsertAsync<TEntity>(entity);
+            return id;
         }
 
         public async Task DeleteAsync(int id)
