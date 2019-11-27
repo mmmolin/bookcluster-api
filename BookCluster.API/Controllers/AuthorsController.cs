@@ -63,32 +63,49 @@ namespace BookCluster.API.Controllers
             try
             {
                 var entities = await unitOfWork.BookRepository.GetAuthorRelatedBooksAsync(id);
-                if(entities.Any())
+                if (entities.Any())
                 {
                     var books = mapper.Map<Models.Book[]>(entities);
                     return Ok(books);
                 }
                 return NotFound();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Database failure");
-            }            
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult<Author>> CreateAuthorASync([FromBody]Author author)
+        public async Task<ActionResult<Author>> AddAuthorASync([FromBody]Author author)
         {
             try
             {
                 var entity = mapper.Map<Domain.Entities.Author>(author);
-                int id = await unitOfWork.AuthorRepository.AddAsync(entity);
+                int entityId = await unitOfWork.AuthorRepository.AddAsync(entity);
 
-                return Created(nameof(GetAuthorAsync), new { id = id });
+                return Created(nameof(GetAuthorAsync), new { id = entityId });
             }
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Database failure"); // Fix this, can't be right.
+            }
+        }
+
+        [HttpPost("{id}/books")]
+        public async Task<ActionResult<Book>> AddAuthorRelatedBook(int id, [FromBody] Book book)
+        {
+            try
+            {
+                var entity = mapper.Map<Domain.Entities.Book>(book);
+                entity.AuthorId = id;
+                int entityId = await unitOfWork.BookRepository.AddAsync(entity);
+
+                return Created(nameof(GetAuthorAsync), new { Id = entityId });
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
     }
