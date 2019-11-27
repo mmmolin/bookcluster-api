@@ -56,5 +56,25 @@ namespace BookCluster.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Database failure");
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoveBook(int id)
+        {
+            try
+            {
+                var entity = GetBookAsync(id);
+                if(entity != null)
+                {
+                    await unitOfWork.BookRepository.DeleteAsync(id);
+                    return Ok();
+                }
+
+                return BadRequest();
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
     }
 }
