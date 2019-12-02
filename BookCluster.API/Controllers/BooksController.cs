@@ -57,8 +57,29 @@ namespace BookCluster.API.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBookAsync(int id, [FromBody] Book book)
+        {
+            try
+            {
+                var entity = await unitOfWork.BookRepository.FindAsync(id);
+                if(entity != null)
+                {
+                    entity.Title = book.Title; // Fix this, it's going to be more properties here.
+                    await unitOfWork.BookRepository.UpdateAsync(entity); 
+                    return Ok();
+                }
+
+                return NotFound();
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+
         [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveBook(int id)
+        public async Task<IActionResult> RemoveBookAsync(int id)
         {
             try
             {
