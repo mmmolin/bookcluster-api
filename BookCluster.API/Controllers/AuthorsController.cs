@@ -108,5 +108,48 @@ namespace BookCluster.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAuthorAsync(int id, [FromBody] Author author)
+        {
+            try
+            {
+                var entity = await unitOfWork.AuthorRepository.FindAsync(id);
+                if (entity != null)
+                {
+                    entity.FirstName = author.FirstName;
+                    entity.LastName = author.LastName;
+                    await unitOfWork.AuthorRepository.UpdateAsync(entity);
+                    return Ok();
+                }
+
+                return NotFound();
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoveAuthorAsync(int id)
+        {
+            try
+            {
+                var entity = await unitOfWork.AuthorRepository.FindAsync(id);
+                if (entity != null)
+                {
+                    await unitOfWork.BookRepository.RemoveAllAuthorRelatedBooks(id); // author should not be deleted until books are deleted, async is a problem?
+                    await unitOfWork.AuthorRepository.DeleteAsync(id); // Fix this, delete doesn't work
+                    return Ok();
+                }
+
+                return BadRequest();
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
     }
 }

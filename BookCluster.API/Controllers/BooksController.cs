@@ -65,7 +65,7 @@ namespace BookCluster.API.Controllers
                 var entity = await unitOfWork.BookRepository.FindAsync(id);
                 if(entity != null)
                 {
-                    entity.Title = book.Title; // Fix this, it's going to be more properties here.
+                    entity.Title = book.Title; // Fix this, there are going to be more properties here. Maybe extension method for these scenarios.
                     await unitOfWork.BookRepository.UpdateAsync(entity); 
                     return Ok();
                 }

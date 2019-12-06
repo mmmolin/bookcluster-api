@@ -28,5 +28,16 @@ namespace BookCluster.Repository
 
             return bookResult;
         }
+
+        public async Task RemoveAllAuthorRelatedBooks(int authorId)
+        {
+            // try catch? return if operation was  successful?
+            var parameters = new { id = authorId };
+            string sql = "DELETE FROM Book WHERE AuthorId = @id";
+            using (var connection = dbContext)
+            {
+                await connection.ExecuteAsync(sql, parameters);
+            }
+        }
     }
 }
