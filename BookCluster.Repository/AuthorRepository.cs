@@ -5,10 +5,11 @@ namespace BookCluster.Repository
 {
     public class AuthorRepository : BaseRepository<Author>
     {
-        private IDbConnection dbContext;
-        public AuthorRepository(IDbConnection dbContext) : base(dbContext)
+        private readonly string connectionString;
+
+        public AuthorRepository(string connectionString) : base(connectionString)
         {
-            this.dbContext = dbContext;
+            this.connectionString = connectionString;
         }
     }
 }

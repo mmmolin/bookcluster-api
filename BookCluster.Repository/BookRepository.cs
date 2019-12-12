@@ -1,4 +1,5 @@
-﻿using BookCluster.Domain.Entities;
+﻿using BookCluster.DataAccess;
+using BookCluster.Domain.Entities;
 using Dapper;
 using System.Collections.Generic;
 using System.Data;
@@ -9,10 +10,11 @@ namespace BookCluster.Repository
 {
     public class BookRepository : BaseRepository<Book>
     {
-        private IDbConnection dbContext;
-        public BookRepository(IDbConnection dbContext) : base(dbContext)
+        private readonly string connectionString;
+
+        public BookRepository(string connectionString) : base(connectionString)
         {
-            this.dbContext = dbContext;
+            this.connectionString = connectionString;
         }
 
         public async Task<List<Book>> GetAuthorRelatedBooksAsync(int authorId)
@@ -20,7 +22,7 @@ namespace BookCluster.Repository
             List<Book> bookResult = null;
             var parameters = new { id = authorId };
             string sql = "SELECT * FROM Book WHERE Book.AuthorId = @id";
-            using (var connection = dbContext)
+            using (var connection = new DbContext(connectionString).GetDbContext())
             {
                 var bookResultAsync = await connection.QueryAsync<Book>(sql, parameters);
                 bookResult = bookResultAsync.ToList();
@@ -34,7 +36,7 @@ namespace BookCluster.Repository
             // try catch? return if operation was  successful?
             var parameters = new { id = authorId };
             string sql = "DELETE FROM Book WHERE AuthorId = @id";
-            using (var connection = dbContext)
+            using (var connection = new DbContext(connectionString).GetDbContext())
             {
                 await connection.ExecuteAsync(sql, parameters);
             }

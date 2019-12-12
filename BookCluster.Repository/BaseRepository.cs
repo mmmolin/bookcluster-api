@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BookCluster.DataAccess;
 using BookCluster.Domain.Interfaces;
 using Dapper.Contrib.Extensions;
 
@@ -10,35 +9,51 @@ namespace BookCluster.Repository
     //TEntity should be a class, it should have an ID and it should have an constructor.
     public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IHaveId, new()
     {
-        private IDbConnection dbContext;
-        public BaseRepository(IDbConnection dbContext)
+        private readonly string connectionString;
+
+        public BaseRepository(string connectionString)
         {
-            this.dbContext = dbContext;
+            this.connectionString = connectionString;
         }
         public async Task<int> AddAsync(TEntity entity)
         {
-            int id = await dbContext.InsertAsync<TEntity>(entity);
-            return id;
+            using (var dbContext = new DbContext(connectionString).GetDbContext())
+            {
+                int id = await dbContext.InsertAsync<TEntity>(entity);
+                return id;
+            }                
         }
 
         public async Task DeleteAsync(int id)
         {
-            await dbContext.DeleteAsync(new TEntity { Id = id });
+            using (var dbContext = new DbContext(connectionString).GetDbContext())
+            {
+                await dbContext.DeleteAsync(new TEntity { Id = id });
+            }
         }
 
         public async Task<TEntity> FindAsync(int id)
         {
-            return await dbContext.GetAsync<TEntity>(id);
+            using (var dbContext = new DbContext(connectionString).GetDbContext())
+            {
+                return await dbContext.GetAsync<TEntity>(id);
+            }
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await dbContext.GetAllAsync<TEntity>();
+            using (var dbContext = new DbContext(connectionString).GetDbContext())
+            {
+                return await dbContext.GetAllAsync<TEntity>();
+            }
         }
 
         public async Task UpdateAsync(TEntity entity)
         {
-            await dbContext.UpdateAsync<TEntity>(entity);
+            using (var dbContext = new DbContext(connectionString).GetDbContext())
+            {
+                await dbContext.UpdateAsync<TEntity>(entity);
+            }
         }
     }
 }

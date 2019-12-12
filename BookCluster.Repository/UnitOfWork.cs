@@ -5,12 +5,12 @@ namespace BookCluster.Repository
 {
     public class UnitOfWork
     {
-        private readonly IDbConnection dbContext;
+        private readonly string connectionString;
         private BookRepository bookRepository;
         private AuthorRepository authorRepository;
         public UnitOfWork(string connectionString)
         {
-            this.dbContext = new DbContext(connectionString).GetDbContext();
+            this.connectionString = connectionString;
         }
 
         public BookRepository BookRepository
@@ -19,7 +19,7 @@ namespace BookCluster.Repository
             {
                 if(bookRepository == null)
                 {
-                    bookRepository = new BookRepository(dbContext);
+                    bookRepository = new BookRepository(connectionString);
                 }
                 return bookRepository;
             }
@@ -31,7 +31,7 @@ namespace BookCluster.Repository
             {
                 if(authorRepository == null)
                 {
-                    authorRepository = new AuthorRepository(dbContext);
+                    authorRepository = new AuthorRepository(connectionString);
                 }
                 return authorRepository;
             }

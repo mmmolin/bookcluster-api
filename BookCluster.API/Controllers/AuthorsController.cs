@@ -140,7 +140,7 @@ namespace BookCluster.API.Controllers
                 if (entity != null)
                 {
                     await unitOfWork.BookRepository.RemoveAllAuthorRelatedBooks(id); // author should not be deleted until books are deleted, async is a problem?
-                    await unitOfWork.AuthorRepository.DeleteAsync(id); // Fix this, delete doesn't work
+                    await unitOfWork.AuthorRepository.DeleteAsync(id);
                     return Ok();
                 }
 
