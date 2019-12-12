@@ -139,9 +139,19 @@ namespace BookCluster.API.Controllers
                 var entity = await unitOfWork.AuthorRepository.FindAsync(id);
                 if (entity != null)
                 {
-                    await unitOfWork.BookRepository.RemoveAllAuthorRelatedBooks(id); // author should not be deleted until books are deleted, async is a problem?
-                    await unitOfWork.AuthorRepository.DeleteAsync(id);
-                    return Ok();
+                    var bookEntities = await unitOfWork.BookRepository.GetAuthorRelatedBooksAsync(id);
+                    bool deleteSuccessful = false;
+                    if(bookEntities != null)
+                    {
+                        deleteSuccessful = await unitOfWork.BookRepository.RemoveAllAuthorRelatedBooks(id);
+                    }
+                    if(deleteSuccessful)
+                    {
+                        await unitOfWork.AuthorRepository.DeleteAsync(id);
+                        return Ok();
+                    }
+
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
                 }
 
                 return BadRequest();

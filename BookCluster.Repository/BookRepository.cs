@@ -31,14 +31,14 @@ namespace BookCluster.Repository
             return bookResult;
         }
 
-        public async Task RemoveAllAuthorRelatedBooks(int authorId)
+        public async Task<bool> RemoveAllAuthorRelatedBooks(int authorId)
         {
-            // try catch? return if operation was  successful?
             var parameters = new { id = authorId };
             string sql = "DELETE FROM Book WHERE AuthorId = @id";
             using (var connection = new DbContext(connectionString).GetDbContext())
             {
-                await connection.ExecuteAsync(sql, parameters);
+                int rowsAffected = await connection.ExecuteAsync(sql, parameters);
+                return rowsAffected > 0;
             }
         }
     }
