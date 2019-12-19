@@ -24,7 +24,7 @@ namespace BookCluster.API
 
             // Binds Option model to data section in appsettings.json. DI.
             services.Configure<Option>(Configuration.GetSection("Data"));
-            services.AddAutoMapper(typeof(Profiles.AuthorProfile));
+            services.AddAutoMapper(typeof(Profiles.AuthorProfile), typeof(Profiles.BookProfile));
 
             // Adds Authentication Service to DI, configures Bearer
             services.AddAuthentication("Bearer")
