@@ -26,14 +26,13 @@ namespace BookCluster.API
             services.Configure<Option>(Configuration.GetSection("Data"));
             services.AddAutoMapper(typeof(Profiles.AuthorProfile), typeof(Profiles.BookProfile));
 
-            // Adds Authentication Service to DI, configures Bearer
+            // Configure JWT bearer authentication handler (Identity Server 4) in DI.
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "http://localhost:6600";
+                    options.Authority = "http://localhost:59418";
                     options.RequireHttpsMetadata = false;
-
-                    options.Audience = "api1";
+                    options.Audience = "bookclusterapi";
                 });
         }
 
@@ -49,8 +48,9 @@ namespace BookCluster.API
 
             app.UseRouting();
 
-            // Adds authentication middleware to pipeline
+            // Adds authentication middleware to pipeline (identity Server 4)
             app.UseAuthentication();
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
