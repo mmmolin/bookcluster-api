@@ -353,4 +353,5 @@ MigrationBackup/
 .ionide/
 
 # My added ignores
-appsettings.json 
+appsettings.json
+bookcluster.pfx

@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.Models;
+using IdentityServer4.Test;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace BookCluster.IdentityServer
         public static IEnumerable<ApiResource> Apis =>
             new List<ApiResource>
             {
-                new ApiResource("api1", "BookCluster API")
+                new ApiResource("bookclusterapi", "bookclusterapi")
             };
 
         // Defining the Client, ClientId(login) and ClientSecrets(password) identifies the client to the identityserver.
@@ -22,12 +23,24 @@ namespace BookCluster.IdentityServer
                 new Client
                 {
                     ClientId = "BookClusterClient",
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
+                    AllowAccessTokensViaBrowser = true,
                     ClientSecrets =
                     {
-                        new Secret("ChangeThisSecret".Sha256())
+                        new Secret("Secret".Sha256())
                     },
-                    AllowedScopes = { "api1" }
+                    AllowedScopes = { "bookclusterapi" }
+                }
+            };
+
+        public static List<TestUser> Users =>
+            new List<TestUser>
+            {
+                new TestUser
+                {
+                    SubjectId = "1",
+                    Username = "testuser@user.se",
+                    Password = "password"
                 }
             };
     }
