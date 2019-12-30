@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace BookCluster.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase

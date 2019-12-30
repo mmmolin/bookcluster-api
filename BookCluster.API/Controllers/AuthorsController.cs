@@ -4,13 +4,16 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BookCluster.API.Models;
 using BookCluster.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace BookCluster.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
+    [ApiController] // test, does it work?
     public class AuthorsController : ControllerBase
     {
         private readonly UnitOfWork unitOfWork;
