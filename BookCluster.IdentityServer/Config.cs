@@ -29,6 +29,7 @@ namespace BookCluster.IdentityServer
                     {
                         new Secret("Secret".Sha256())
                     },
+                    RedirectUris = { "http://localhost:59418/signin-oidc" },
                     AllowedScopes = { "bookclusterapi" }
                 }
             };
