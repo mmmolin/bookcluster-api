@@ -1,4 +1,5 @@
-﻿using IdentityServer4.Models;
+﻿using IdentityServer4;
+using IdentityServer4.Models;
 using IdentityServer4.Test;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,30 @@ namespace BookCluster.IdentityServer
                 new Client
                 {
                     ClientId = "BookClusterClient",
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials,
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
                     AllowAccessTokensViaBrowser = true,
                     ClientSecrets =
                     {
                         new Secret("Secret".Sha256())
                     },
-                    RedirectUris = { "http://localhost:59418/signin-oidc" },
                     AllowedScopes = { "bookclusterapi" }
+                },
+                new Client
+                {
+                    ClientId = "BookClusterClient_Code",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowAccessTokensViaBrowser = true,
+                    ClientSecrets =
+                    {
+                        new Secret("Secret".Sha256())
+                    },
+                    RedirectUris = {"http://localhost:59418/signin-oidc"},
+                    AllowedScopes = 
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "bookclusterapi"
+                    }
                 }
             };
 

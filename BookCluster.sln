@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCluster.Domain", "BookC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCluster.API", "BookCluster.API\BookCluster.API.csproj", "{2739C78F-96AB-4DB7-9513-ABD36B529013}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCluster.IdentityServer", "BookCluster.IdentityServer\BookCluster.IdentityServer.csproj", "{FF2BD705-0A63-4E68-907B-F60934F63C79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCluster.IdentityServer", "BookCluster.IdentityServer\BookCluster.IdentityServer.csproj", "{FF2BD705-0A63-4E68-907B-F60934F63C79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
