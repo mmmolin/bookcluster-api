@@ -17,6 +17,14 @@ namespace BookCluster.IdentityServer
                 new ApiResource("bookclusterapi", "bookclusterapi")
             };
 
+        // Defining Identity resources, user assign claims to these. 
+        public static IEnumerable<IdentityResource> Identity =>
+            new List<IdentityResource>
+            {
+                new IdentityResources.OpenId(), // Id
+                new IdentityResources.Profile()
+            };
+
         // Defining the Client, ClientId(login) and ClientSecrets(password) identifies the client to the identityserver.
         public static IEnumerable<Client> Clients =>
             new List<Client>
@@ -57,7 +65,7 @@ namespace BookCluster.IdentityServer
                 new TestUser
                 {
                     SubjectId = "1",
-                    Username = "testuser@user.se",
+                    Username = "testuser@test.se",
                     Password = "password"
                 }
             };
