@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using BookCluster.IdentityServer.Models;
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -71,6 +73,9 @@ namespace BookCluster.IdentityServer
                 app.UseDeveloperExceptionPage();
             }
 
+            // TRemprorary for seeding
+            MigrateInMemoryDataToSqlServer(app);
+
             // Add Identity Server middleware to pipeline
             app.UseIdentityServer();
 
@@ -85,6 +90,48 @@ namespace BookCluster.IdentityServer
             //        await context.Response.WriteAsync("Hello World!");
             //    });
             //});
+        }
+
+        public void MigrateInMemoryDataToSqlServer(IApplicationBuilder app)
+        {
+            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+                var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+
+                context.Database.Migrate();
+
+                if(!context.Clients.Any())
+                {
+                    foreach(var client in Config.Clients)
+                    {
+                        context.Clients.Add(client.ToEntity());
+                    }
+
+                    context.SaveChanges();
+                }
+
+                if(!context.IdentityResources.Any())
+                {
+                    foreach(var id in Config.Identity)
+                    {
+                        context.IdentityResources.Add(id.ToEntity());
+                    }
+
+                    context.SaveChanges();
+                }
+
+                if(!context.ApiResources.Any())
+                {
+                    foreach(var api in Config.Apis)
+                    {
+                        context.ApiResources.Add(api.ToEntity());
+                    }
+
+                    context.SaveChanges();
+                }
+            }
         }
     }
 }
