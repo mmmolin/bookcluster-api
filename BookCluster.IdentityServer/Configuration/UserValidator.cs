@@ -4,19 +4,29 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BookCluster.Domain.Entities;
+using BookCluster.Domain.Interfaces;
+using BookCluster.Repository;
 
 namespace BookCluster.IdentityServer.Configuration
 {
     public class UserValidator : IUserValidator
     {
-        public Task<User> FindByUsernameAsync(string userName)
+        private readonly IUserRepository userRepository;
+
+        public UserValidator(IUserRepository repository)
         {
-            throw new NotImplementedException();
+            this.userRepository = repository;
         }
 
-        public Task<bool> ValidateCredentialsAsync(string username, string password)
+        public Task<User> FindByUsernameAsync(string userName)
         {
-            throw new NotImplementedException();
+            return userRepository.FindUserAsync(userName);
+        }
+
+        public async Task<bool> ValidateCredentialsAsync(string userName, string password)
+        {
+            var user = await userRepository.GetUserAsync(userName, password);
+            return user != null;
         }
     }
 
@@ -24,7 +34,5 @@ namespace BookCluster.IdentityServer.Configuration
     {
         Task<bool> ValidateCredentialsAsync(string username, string password);
         Task<User> FindByUsernameAsync(string userName);
-        //Task<User> FindByExternalProvider(string provider, string userId);
-        //Task<User> AutoProvisionUserASync(string provider, string userId, IEnumerable<Claim> claims);
     }
 }

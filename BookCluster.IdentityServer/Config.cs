@@ -57,17 +57,6 @@ namespace BookCluster.IdentityServer
                         "bookclusterapi"
                     }
                 }
-            };
-
-        public static List<TestUser> Users =>
-            new List<TestUser>
-            {
-                new TestUser
-                {
-                    SubjectId = "1",
-                    Username = "testuser@test.se",
-                    Password = "password"
-                }
-            };
+            };        
     }
 }
