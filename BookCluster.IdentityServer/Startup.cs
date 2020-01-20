@@ -4,7 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using BookCluster.Domain.Interfaces;
+using BookCluster.IdentityServer.Configuration;
 using BookCluster.IdentityServer.Models;
+using BookCluster.Repository;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
@@ -46,19 +49,22 @@ namespace BookCluster.IdentityServer
             var assembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             // Configure Identity Server
+            services.AddTransient<IUserValidator, UserValidator>();
+            services.AddTransient<IUserRepository>(isp => 
+            new UserRepository(configuration.GetConnectionString("BookCluster"))); // First type should be an interface
+
             services.AddIdentityServer()
                 .AddSigningCredential(new X509Certificate2(@"..\bookcluster.pfx", config.CertificatePass))
-                .AddTestUsers(Config.Users) // temporary
                 .AddConfigurationStore(options =>
                 {
                     options.ConfigureDbContext = builder =>
-                    builder.UseSqlServer(configuration.GetConnectionString("BookCluster"),
+                    builder.UseSqlServer(configuration.GetConnectionString("BookClusterIdentity"),
                     sql => sql.MigrationsAssembly(assembly));
                 })
                 .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = builder =>
-                    builder.UseSqlServer(configuration.GetConnectionString("BookCluster"),
+                    builder.UseSqlServer(configuration.GetConnectionString("BookClusterIdentity"),
                     sql => sql.MigrationsAssembly(assembly));
                 });
 

@@ -16,5 +16,9 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BookCluster.Domain\BookCluster.Domain.csproj" />
+    <ProjectReference Include="..\BookCluster.Repository\BookCluster.Repository.csproj" />
+  </ItemGroup>
 
 </Project>
