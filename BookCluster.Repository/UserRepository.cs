@@ -31,11 +31,11 @@ namespace BookCluster.Repository
                 return userResult;
         }
 
-        public async Task<User> GetUserAsync(string userName, string passwordHash)
+        public async Task<User> GetUserAsync(string userName, string passWord)
         {
             User userResult = null;
-            var parameters = new { username = userName, passwordhash = passwordHash };
-            string sql = "SELECT * FROM Account WHERE Account.UserName = @username AND Account.PasswordHash = @passwordhash";
+            var parameters = new { username = userName, password = passWord };
+            string sql = "SELECT * FROM Account WHERE Account.UserName = @username AND Account.Password = @password";
             using (var connection = new DbContext(connectionString).GetDbContext())
             {
                 var userResultAsync = await connection.QueryAsync<User>(sql, parameters);
