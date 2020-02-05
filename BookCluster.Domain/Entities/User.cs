@@ -1,8 +1,5 @@
 ﻿using BookCluster.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace BookCluster.Domain.Entities
 {
@@ -10,7 +7,8 @@ namespace BookCluster.Domain.Entities
     {
         [Key]
         public int Id { get; set; }
-        public string Password { get; set; }
         public string Username { get; set; }
+        public string Hash { get; set; }
+        public string Salt { get; set; }
     }
 }
