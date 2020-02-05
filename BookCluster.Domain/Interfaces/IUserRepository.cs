@@ -11,7 +11,7 @@ namespace BookCluster.Domain.Interfaces
         public Task<User> FindUserAsync(string userName);
 
 
-        public Task<User> GetUserAsync(string userName, string passwordHash);
+        public Task<User> GetUserAsync(string userName, string passWord);
         
     }
 }
