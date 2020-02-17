@@ -8,10 +8,14 @@ namespace BookCluster.Repository
         private readonly string connectionString;
         private BookRepository bookRepository;
         private AuthorRepository authorRepository;
+        private UserRepository userRepository;
+
         public UnitOfWork(string connectionString)
         {
             this.connectionString = connectionString;
         }
+
+        // When instantiating UnitOfWork, these getters make sure to only instatiate the needed repository.
 
         public BookRepository BookRepository
         {
@@ -34,6 +38,18 @@ namespace BookCluster.Repository
                     authorRepository = new AuthorRepository(connectionString);
                 }
                 return authorRepository;
+            }
+        }
+
+        public UserRepository UserRepository
+        {
+            get
+            {
+                if(userRepository == null)
+                {
+                    userRepository = new UserRepository(connectionString);
+                }
+                return userRepository;
             }
         }
     }

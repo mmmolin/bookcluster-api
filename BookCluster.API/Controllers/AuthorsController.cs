@@ -13,7 +13,7 @@ namespace BookCluster.API.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
-    [ApiController] // test, does it work?
+    [ApiController]
     public class AuthorsController : ControllerBase
     {
         private readonly UnitOfWork unitOfWork;
