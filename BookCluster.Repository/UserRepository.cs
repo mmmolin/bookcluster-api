@@ -48,13 +48,32 @@ namespace BookCluster.Repository
             if (userResult != null)
             {
                 var inputPasswordHash = HashPassword(parameters.password, userResult.Salt);
-                var userAccountHash = Convert.FromBase64String(userResult.Hash); // Temporary, use byte[] in db
+                var userAccountHash = Convert.FromBase64String(userResult.Hash); // Temporary, store byte[] as varbinary(max) in db.
 
                 userResult = ValidateHash(userAccountHash, inputPasswordHash) ? userResult : null;
             }
 
             return userResult;
         }
+
+        public async Task<bool> AddUserAsync(string userName, string password)
+        {
+            var newSalt = Guid.NewGuid().ToString();
+            var newHash = HashPassword(password, newSalt);
+            var convertedHash = Convert.ToBase64String(newHash);
+
+            bool insertSuccess = false;
+            var parameters = new { username = userName, hash = convertedHash, salt = newSalt };
+            string sql = "INSERT INTO Account (UserName, Hash, Salt) VALUES (@username, @hash, @salt)";
+            using (var connection = new DbContext(connectionString).GetDbContext())
+            {
+                var affectedRows = await connection.ExecuteAsync(sql, parameters);
+                insertSuccess = affectedRows != 0;
+            }
+
+            return insertSuccess;
+        }
+
 
         public byte[] HashPassword(string password, string salt)
         {
