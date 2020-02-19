@@ -22,12 +22,6 @@ namespace BookCluster.IdentityServer
 {
     public class Startup
     {
-        //private readonly IConfiguration configuration;
-        //public Startup(IConfiguration configuration)
-        //{
-        //    this.configuration = configuration;
-        //}
-
         private IConfiguration configuration;
         public Startup(IWebHostEnvironment env)
         {
@@ -40,8 +34,6 @@ namespace BookCluster.IdentityServer
             configuration = builder.Build();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             // Get certificate password (temporary)
@@ -71,7 +63,6 @@ namespace BookCluster.IdentityServer
             services.AddMvc(option => option.EnableEndpointRouting = false); // temporary
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -79,65 +70,12 @@ namespace BookCluster.IdentityServer
                 app.UseDeveloperExceptionPage();
             }
 
-            // TRemprorary for seeding
-            MigrateInMemoryDataToSqlServer(app);
-
             // Add Identity Server middleware to pipeline
             app.UseIdentityServer();
-
+                
             app.UseRouting();
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
-            
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapGet("/", async context =>
-            //    {
-            //        await context.Response.WriteAsync("Hello World!");
-            //    });
-            //});
-        }
-
-        public void MigrateInMemoryDataToSqlServer(IApplicationBuilder app)
-        {
-            using (var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-
-                var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-
-                context.Database.Migrate();
-
-                if(!context.Clients.Any())
-                {
-                    foreach(var client in Config.Clients)
-                    {
-                        context.Clients.Add(client.ToEntity());
-                    }
-
-                    context.SaveChanges();
-                }
-
-                if(!context.IdentityResources.Any())
-                {
-                    foreach(var id in Config.Identity)
-                    {
-                        context.IdentityResources.Add(id.ToEntity());
-                    }
-
-                    context.SaveChanges();
-                }
-
-                if(!context.ApiResources.Any())
-                {
-                    foreach(var api in Config.Apis)
-                    {
-                        context.ApiResources.Add(api.ToEntity());
-                    }
-
-                    context.SaveChanges();
-                }
-            }
         }
     }
 }
