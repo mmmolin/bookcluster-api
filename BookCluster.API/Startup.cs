@@ -17,16 +17,18 @@ namespace BookCluster.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        // This method configure services that can then be used in the project using dependency injection.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
-            // Binds Option model to data section in appsettings.json. DI.
+            // Binds Option model to data section in appsettings.json.
             services.Configure<Option>(Configuration.GetSection("Data"));
+            
+            // Setup for AutoMapper
             services.AddAutoMapper(typeof(Profiles.AuthorProfile), typeof(Profiles.BookProfile), typeof(Profiles.AuthorProfile));
 
-            // Configure JWT bearer authentication handler (Identity Server 4) in DI.
+            // Configure JWT bearer authentication handler (Identity Server 4).
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
@@ -36,7 +38,7 @@ namespace BookCluster.API
                 });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // This method configures the Request Processing Pipline by adding middleware. 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -45,12 +47,10 @@ namespace BookCluster.API
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
-            // Adds authentication middleware to pipeline (identity Server 4)
-            app.UseAuthentication();
-            
+            // Adds authentication and Authorization middleware to pipeline (identity Server 4)
+            app.UseAuthentication();            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
