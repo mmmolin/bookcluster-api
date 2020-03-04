@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using BookCluster.API.Models;
 using BookCluster.Repository;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace BookCluster.API.Controllers
 {
@@ -36,7 +37,7 @@ namespace BookCluster.API.Controllers
             try
             {
                 var insertSuccess = await unitOfWork.UserRepository.AddUserAsync(user.UserName, user.Password);
-                if(insertSuccess)
+                if (insertSuccess)
                 {
                     return Created("test", user.UserName);
                 }
@@ -52,6 +53,14 @@ namespace BookCluster.API.Controllers
         // Update UserInformation
 
         // Get User Books
+        [HttpGet("{Books}")]
+        public async Task<ActionResult<List<Book>>> GetUserRelatedBooksAsync()
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var test = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            return null;
+        }
 
         // Add User Books
 

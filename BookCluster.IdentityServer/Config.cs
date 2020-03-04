@@ -1,10 +1,7 @@
-﻿using IdentityServer4;
+﻿using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
-using IdentityServer4.Test;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookCluster.IdentityServer
 {
@@ -14,7 +11,7 @@ namespace BookCluster.IdentityServer
         public static IEnumerable<ApiResource> Apis =>
             new List<ApiResource>
             {
-                new ApiResource("bookclusterapi", "bookclusterapi")
+                new ApiResource("bookclusterapi", "bookclusterapi", new [] {JwtClaimTypes.Email})
             };
 
         // Defining Identity resources, user assign claims to these. 
@@ -22,7 +19,8 @@ namespace BookCluster.IdentityServer
             new List<IdentityResource>
             {
                 new IdentityResources.OpenId(), // Id
-                new IdentityResources.Profile()
+                new IdentityResources.Profile(),
+                new IdentityResources.Email()
             };
 
         // Defining the Client, ClientId(login) and ClientSecrets(password) identifies the client to the identityserver.
@@ -54,6 +52,7 @@ namespace BookCluster.IdentityServer
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
                         "bookclusterapi"
                     }
                 }
