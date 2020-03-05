@@ -88,6 +88,23 @@ namespace BookCluster.Repository
             return userBookResults;
         }
 
+        public async Task<bool> AddBookToUser(string userId, string bookId)
+        {
+            bool insertSuccess = false; 
+            var parameters = new { userid = userId, bookid = bookId };
+            var sql = "INSERT INTO BookAccount (BookID, AccountID) VALUES (@bookid, @userid)";
+            using (var connection = new DbContext(connectionString).GetDbContext())
+            {
+                var rowsAffected = await connection.ExecuteAsync(sql, parameters);
+                if(rowsAffected == 1)
+                {
+                    insertSuccess = true;
+                }
+            }
+
+            return insertSuccess;
+        }
+
 
         public byte[] HashPassword(string password, string salt)
         {
