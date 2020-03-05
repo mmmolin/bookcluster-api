@@ -54,7 +54,7 @@ namespace BookCluster.API.Controllers
 
         // Get User Books
         [HttpGet("{Books}")]
-        public async Task<ActionResult<List<Book>>> GetUserRelatedBooksAsync()   // Here you are!
+        public async Task<ActionResult<List<Book>>> GetUserRelatedBooksAsync()
         {
             try
             {
@@ -74,7 +74,26 @@ namespace BookCluster.API.Controllers
             }
         }
 
-        // Add User Books
+        [HttpPost("{Books}")]
+        public async Task<ActionResult<bool>> AddBookToUserAsync([FromBody] string bookId)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var insertSuccess = await unitOfWork.UserRepository.AddBookToUser(userId, bookId);
+                if (insertSuccess)
+                {
+                    return Ok();
+                }
+
+                return Conflict();
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Database Failure");
+            }
+        }
+
 
         // Delete User Books
 
