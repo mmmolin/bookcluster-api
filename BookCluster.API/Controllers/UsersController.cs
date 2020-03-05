@@ -54,12 +54,24 @@ namespace BookCluster.API.Controllers
 
         // Get User Books
         [HttpGet("{Books}")]
-        public async Task<ActionResult<List<Book>>> GetUserRelatedBooksAsync()
+        public async Task<ActionResult<List<Book>>> GetUserRelatedBooksAsync()   // Here you are!
         {
-            var handler = new JwtSecurityTokenHandler();
-            var test = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
-            return null;
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var entities = await unitOfWork.UserRepository.GetUserBooksAsync(userId);
+                if(entities != null)
+                {
+                    var books = mapper.Map<Models.Book[]>(entities);
+                    return Ok(books);
+                }
+
+                return Ok(); // StatusCode 204 or 404?
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Database Failure");
+            }
         }
 
         // Add User Books

@@ -4,6 +4,7 @@ using BookCluster.Domain.Interfaces;
 using Dapper;
 using Konscious.Security.Cryptography;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,6 +73,19 @@ namespace BookCluster.Repository
             }
 
             return insertSuccess;
+        }
+
+        public async Task<IEnumerable<Book>> GetUserBooksAsync(string userId)
+        {
+            IEnumerable<Book> userBookResults = null;
+            var parameters = new { userid = userId };
+            string sql = "SELECT * FROM Book INNER JOIN BookAccount ON Book.ID = BookAccount.BookID WHERE BookAccount.AccountID = @userid";
+            using (var connection = new DbContext(connectionString).GetDbContext())
+            {
+                userBookResults = await connection.QueryAsync<Book>(sql, parameters);
+            }
+
+            return userBookResults;
         }
 
 
