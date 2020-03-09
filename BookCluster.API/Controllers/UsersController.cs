@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -86,6 +87,10 @@ namespace BookCluster.API.Controllers
                     return Ok();
                 }
 
+                return Conflict();
+            }
+            catch(SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Check for Unique key violation
+            {
                 return Conflict(); // Never get hit by unique key violation
             }
             catch
