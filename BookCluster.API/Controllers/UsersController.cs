@@ -86,7 +86,7 @@ namespace BookCluster.API.Controllers
                     return Ok();
                 }
 
-                return Conflict();
+                return Conflict(); // Never get hit by unique key violation
             }
             catch
             {

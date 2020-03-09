@@ -79,7 +79,7 @@ namespace BookCluster.Repository
         {
             IEnumerable<Book> userBookResults = null;
             var parameters = new { userid = userId };
-            string sql = "SELECT * FROM Book INNER JOIN BookAccount ON Book.ID = BookAccount.BookID WHERE BookAccount.AccountID = @userid";
+            string sql = "SELECT Book.ID, Book.Title FROM Book INNER JOIN BookAccount ON Book.ID = BookAccount.BookID WHERE BookAccount.AccountID = @userid";
             using (var connection = new DbContext(connectionString).GetDbContext())
             {
                 userBookResults = await connection.QueryAsync<Book>(sql, parameters);
