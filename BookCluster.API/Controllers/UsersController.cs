@@ -19,8 +19,8 @@ namespace BookCluster.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private UnitOfWork unitOfWork;
-        private IMapper mapper;
+        private readonly UnitOfWork unitOfWork;
+        private readonly IMapper mapper;
 
         public UsersController(IOptions<Option> option, IMapper mapper)
         {
@@ -54,14 +54,14 @@ namespace BookCluster.API.Controllers
         // Update UserInformation
 
         // Get User Books
-        [HttpGet("{Books}")]
+        [HttpGet("Books")]
         public async Task<ActionResult<List<Book>>> GetUserRelatedBooksAsync()
         {
             try
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var entities = await unitOfWork.UserRepository.GetUserBooksAsync(userId);
-                if(entities != null)
+                if (entities != null)
                 {
                     var books = mapper.Map<Models.Book[]>(entities);
                     return Ok(books);
@@ -75,7 +75,7 @@ namespace BookCluster.API.Controllers
             }
         }
 
-        [HttpPost("{Books}")]
+        [HttpPost("Books")]
         public async Task<ActionResult<bool>> AddBookToUserAsync([FromBody] string bookId)
         {
             try
@@ -89,9 +89,9 @@ namespace BookCluster.API.Controllers
 
                 return Conflict();
             }
-            catch(SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Check for Unique key violation
+            catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Check for Unique key violation
             {
-                return Conflict(); // Never get hit by unique key violation
+                return Conflict();
             }
             catch
             {
@@ -100,8 +100,31 @@ namespace BookCluster.API.Controllers
         }
 
 
-        // Delete User Books
+        //// Delete User Books
+        [HttpDelete("Books/{bookId}")]
+        public async Task<IActionResult> RemoveBookFromUser(string bookId)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userBook = await unitOfWork.UserRepository.GetUserBookAsync(userId, bookId);
+                bool deleteSuccess = false;
+                if(userBook.Count == 1)
+                {
+                    deleteSuccess = await unitOfWork.UserRepository.RemoveBookFromUser(userId, bookId);
+                }
+                if (deleteSuccess)
+                {
+                    return Ok();
+                }
 
+                return BadRequest();
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Database failure");
+            }
+        }
 
     }
 }
