@@ -75,6 +75,19 @@ namespace BookCluster.Repository
             return insertSuccess;
         }
 
+        public async Task<ICollection<Book>> GetUserBookAsync(string userId, string bookId)
+        {
+            ICollection<Book> userBookResult = null;
+            var parameters = new { userid = userId, bookid = bookId };
+            var sql = "SELECT * FROM BookAccount WHERE BookAccount.AccountID = @userid AND BookAccount.BookID = @bookid";
+            using (var connection = new DbContext(connectionString).GetDbContext())
+            {
+                userBookResult = await connection.QueryAsync<Book>(sql, parameters) as ICollection<Book>;
+            }
+
+            return userBookResult;
+        }
+
         public async Task<IEnumerable<Book>> GetUserBooksAsync(string userId)
         {
             IEnumerable<Book> userBookResults = null;
@@ -103,6 +116,20 @@ namespace BookCluster.Repository
             }
 
             return insertSuccess;
+        }
+
+        public async Task<bool> RemoveBookFromUser(string userId, string bookId)
+        {
+            bool deleteSuccess;
+            var parameters = new { userid = userId, bookid = bookId };
+            var sql = "DELETE FROM BookAccount WHERE BookAccount.AccountID = @userid AND BookAccount.BookID = @bookid";
+            using (var connection = new DbContext(connectionString).GetDbContext())
+            {
+                var affectedRows = await connection.ExecuteAsync(sql, parameters);
+                deleteSuccess = affectedRows == 1;
+            }
+
+            return deleteSuccess;
         }
 
 
