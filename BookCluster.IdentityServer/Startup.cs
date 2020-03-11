@@ -71,8 +71,7 @@ namespace BookCluster.IdentityServer
             }
 
             // Add Identity Server middleware to pipeline
-            app.UseIdentityServer();
-                
+            app.UseIdentityServer();                
             app.UseRouting();
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
